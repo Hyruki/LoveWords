@@ -16,6 +16,22 @@ def islogin() -> bool:
             return True
         else:
             return False
+        
+def isadmin() -> bool:
+    user = session.get('user')
+    password = session.get('password')
+
+    if user == None or password == None:
+        return False
+    else:
+
+        admincheck = getRowDB(f"SELECT admin FROM users WHERE user='{user}' and hashpassword='{password}'")[0][0]
+
+        if admincheck == 1:
+            return True
+        else:
+            return False
+
 
 # Templating MODS
 def modern_template(dir : str, *arg, **kwargs) -> None:
@@ -24,8 +40,13 @@ def modern_template(dir : str, *arg, **kwargs) -> None:
     return render_template(dir,is_login=is_login, *arg, **kwargs)
 
 def admin_template(dir : str, *arg, **kwargs) -> None:
-    return render_template(dir, *arg, **kwargs)
+    if isadmin():
+        return render_template(dir, *arg, **kwargs)
+    else:
+        return redirect('/')
 
+
+# SQL MODS
 def getRowDB(request : str) -> list:
     con = sqlite3.connect('data.db')
     c = con.cursor()
