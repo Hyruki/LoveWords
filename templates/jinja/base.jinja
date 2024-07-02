@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +18,11 @@
     <div id="navbar">
         <nav class="navbar fixed-top" style="background-color: #512869;">
             <h3 class="text text-white ms-3 ff-LO">Love Words</h3>
-            <a class="btn btn-dark m-2 ff-LO" href="#">Se connecter</a>
+            {% if is_login == True %}
+                <a class="btn btn-dark m-2 ff-LO" href={{url_for('logout')}}>Se déconnecter</a>
+            {% else %}
+                <a class="btn btn-dark m-2 ff-LO" href={{url_for('login')}}>Se connecter</a>
+            {% endif %}
         </nav>
     </div>
 </body> <br><br><br><br>
