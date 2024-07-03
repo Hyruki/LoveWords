@@ -35,15 +35,22 @@ def isadmin() -> bool:
 
 # Templating MODS
 def modern_template(dir : str, *arg, **kwargs) -> None:
-    is_login = islogin()
-    
-    return render_template(dir,is_login=is_login, *arg, **kwargs)
+    try:
+        is_login = islogin()
+
+        return render_template(dir,is_login=is_login, *arg, **kwargs)
+    except Exception as e:
+        print(e)
 
 def admin_template(dir : str, *arg, **kwargs) -> None:
-    if isadmin():
-        return render_template(dir, *arg, **kwargs)
-    else:
-        return redirect('/')
+    try:
+        if isadmin():
+            return render_template(dir, *arg, **kwargs)
+        else:
+            return redirect('/')
+    except Exception as e:
+        print(e)
+
 
 
 # SQL MODS
@@ -53,12 +60,31 @@ def getRowDB(request : str) -> list:
 
     c.execute(request)
 
-    return c.fetchall()
+    result = c.fetchall()
 
-def setRowDB(request : str) -> str:
+    c.close()
+
+    return result
+
+def setRowDB(request : str) -> None:
     con = sqlite3.connect('data.db')
     c = con.cursor()
 
     c.execute(request)
 
+    con.commit()
+
+    con.close()
+
+
+def getHeaderDB(table_name : str) -> list:
+    con = sqlite3.connect('data.db')
+    c = con.cursor()
+
+    c.execute(f"PRAGMA table_info({table_name});")
+
+    result = c.fetchall()
+
     c.close()
+
+    return result
