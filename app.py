@@ -12,7 +12,7 @@ admin.admin_sys(app)
 # Main Menu
 @app.route('/', methods=['POST', 'GET'])
 def main_page():
-    return modern_template('jinja/index.jinja')
+    return modern_template('html/index.html')
 
 # AUTH SYS
 # Login Sys
@@ -33,11 +33,11 @@ def login():
                 session['password'] = is_account
                 return redirect('/')
             else:
-                return render_template('jinja/auth/login.jinja', error_mess = True)
+                return render_template('html/auth/login.html', error_mess = True)
 
 
 
-    return render_template('jinja/auth/login.jinja', error_mess = False)
+    return render_template('html/auth/login.html', error_mess = False)
 
 @app.route('/logout')
 def logout():

@@ -5,11 +5,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 def admin_sys(app):    
     @app.route('/admin')
     def admin_menu():
-        return admin_template('jinja/admin/admin.jinja')
+        return admin_template('html/admin/admin.html')
 
+    # =====================================
+    # =============== USERs ===============
+    # =====================================
     @app.route('/admin/users', methods=['GET', 'POST'])
     def admin_users():
-        return admin_template('jinja/admin/users/admin_users.jinja', headers=getHeaderDB('users'), rows=getRowDB('SELECT * FROM users'))
+        return admin_template('html/admin/users/admin_users.html', headers=getHeaderDB('users'), rows=getRowDB('SELECT * FROM users'))
     
     @app.route('/admin/users/<id>', methods=['GET', 'POST'])
     def admin_users_modification(id):
@@ -32,10 +35,10 @@ def admin_sys(app):
 
 
             print(request.form.get('id_user'), username, hashpass, type(id))
-            setRowDB(f"UPDATE users SET user='{username}',hashpassword='{hashpass}',admin={isadmin} WHERE id={id}")
+            setRowDB(f"""UPDATE users SET user="{username}",hashpassword="{hashpass}",admin={isadmin} WHERE id={id}""")
             return redirect('/admin/users')
          
-        return admin_template('jinja/admin/users/admin_users_modify.jinja', user_data=getRowDB(f'SELECT * FROM users WHERE id={id}'))
+        return admin_template('html/admin/users/admin_users_modify.html', user_data=getRowDB(f'SELECT * FROM users WHERE id={id}'))
     
     @app.route('/admin/users/add', methods=['GET', 'POST'])
     def admin_user_add():
@@ -50,14 +53,102 @@ def admin_sys(app):
             if request.form.get('admin_check') == '':
                 isadmin = 1
             
-            setRowDB(f"INSERT INTO users VALUES(null, '{username}', '{hashpass}', {isadmin})")
+            setRowDB(f"""INSERT INTO users VALUES(null, "{username}", "{hashpass}", {isadmin})""")
 
             return redirect('/admin/users')
 
             
-        return admin_template('jinja/admin/users/admin_users_add.jinja')
+        return admin_template('html/admin/users/admin_users_add.html')
     
     @app.route('/admin/users/delete/<id>', methods=['GET', 'POST'])
     def admin_user_delete(id):
         setRowDB(f"DELETE FROM users WHERE id={id}")
         return redirect('/admin/users')
+    
+
+    # =====================================
+    # ============= CATEGORYs =============
+    # =====================================
+
+    @app.route('/admin/category')
+    def admin_category():
+        return admin_template('html/admin/category/admin_category.html', headers=getHeaderDB('categorys'), rows=getRowDB('SELECT * FROM categorys'))
+    
+    @app.route('/admin/category/<id>', methods=['GET', 'POST'])
+    def admin_category_modify(id):
+        
+        category_name = getRowDB(f"SELECT category FROM categorys WHERE id={id}")
+
+        print(category_name)
+
+        if request.method == "POST":
+            category_name = request.form.get('category_name')
+
+            setRowDB(f"""UPDATE categorys SET category="{category_name}" WHERE id={id}""")
+
+            return redirect('/admin/category')
+
+        return admin_template('html/admin/category/admin_category_modify.html', category_name=category_name)
+
+    @app.route('/admin/category/add', methods=['GET', 'POST'])
+    def admin_category_add():
+
+        if request.method == "POST":
+            category_name = request.form.get('category_name')
+
+            setRowDB(f"""INSERT INTO categorys VALUES(null,"{category_name}")""")
+
+            return redirect('/admin/category')
+
+        return admin_template('html/admin/category/admin_category_add.html')
+
+    @app.route('/admin/category/delete/<id>', methods=['GET', 'POST'])
+    def admin_category_remove(id):
+
+        setRowDB(f"DELETE FROM categorys WHERE id={id}")
+
+        return redirect('/admin/category')
+    
+    # =====================================
+    # ============  MESSAGES  =============
+    # =====================================
+
+    @app.route('/admin/message')
+    def admin_message():
+        return admin_template('html/admin/message/admin_message.html', headers=getHeaderDB('messages'), rows=getRowDB('SELECT * FROM messages ORDER BY category_id') )
+
+    @app.route('/admin/message/<id>', methods=['GET', 'POST'])
+    def admin_message_modify(id):
+
+        if request.method == "POST":
+            title = request.form.get('message_title')
+            content = request.form.get('message_content')
+            category_id = request.form.get('category_select')
+
+            setRowDB(f"""UPDATE messages SET title="{title}",content="{content}",category_id={category_id} WHERE id={id}""")
+
+            return redirect('/admin/message')
+
+        return admin_template('html/admin/message/admin_message_modify.html', messages_data=getRowDB(f"SELECT title,content,category_id FROM messages WHERE id={id}"), categorys=getRowDB(f"SELECT * FROM categorys"))
+
+
+    @app.route('/admin/message/add', methods=['GET', 'POST'])
+    def admin_message_add():
+
+        if request.method == "POST":
+            title = request.form.get('message_title')
+            content = request.form.get('message_content')
+            category_id = request.form.get('category_select')
+
+            setRowDB(f"""INSERT INTO messages VALUES(null,"{title}","{content}",{category_id})""")
+
+            return redirect('/admin/message')
+
+        return admin_template('html/admin/message/admin_message_add.html', categorys=getRowDB(f"SELECT * FROM categorys"))
+
+    @app.route('/admin/message/delete/<id>', methods=['GET', 'POST'])
+    def admin_message_delete(id):
+        setRowDB(f"DELETE FROM messages WHERE id={id}")
+
+        return redirect('/admin/message')
+    

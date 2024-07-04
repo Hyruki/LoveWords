@@ -16,17 +16,12 @@
     <center>
         <div class="container shadow border-dark border-1 my-5">
             <center>
-                <h1>Users - Modification</h1>
-                <a class="btn btn-dark m-auto my-3 px-5" href={{url_for('admin_users')}}>Retour</a><br><br>
+                {% set category_name_id = category_name[0][0] %}
+                <h1>Category - Modification</h1>
+                <a class="btn btn-dark m-auto my-3 px-5" href={{url_for('admin_category')}}>Retour</a><br><br>
                 <form method="POST">
                     <div class="form-group py-3" style="width: 300px;">
-                        <input hidden name="id_user" value={{id}}>
-                        <input required name="username_input" type="text" class="form-control" placeholder="Nom d'utilisateur" value={{username}} ><br>
-                        <input required name="password_input" type="text" class="form-control" placeholder="Mot de passe (Not Hashed !!!)" value={{hashpassword}}><br>
-                        <div class="from-checked">
-                            <input name="admin_check" class="form-check-input" type="checkbox" value="" id="" />
-                            <label class="form-check-label" for=""> Administrateur </label>
-                        </div>
+                        <input required name="category_name" type="text" class="form-control" placeholder="Nom de catégorie" value="{{category_name_id}}"><br>
                         <button type="Submit" class="btn m-auto my-3 px-5" style="background-color: rgb(93, 187, 0);">Mettre à jour</button>
                     </div>
                 </form>
