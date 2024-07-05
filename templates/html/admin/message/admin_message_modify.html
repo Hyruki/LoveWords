@@ -19,11 +19,13 @@
                 {% set title = messages_data[0][0] %}
                 {% set content = messages_data[0][1] %}
                 {% set category_id = messages_data[0][2] %}
+                {% set id = messages_data[0][3] %}
 
                 <h1>Messages - Modification</h1>
                 <a class="btn btn-dark m-auto my-3 px-5" href={{url_for('admin_message')}}>Retour</a><br><br>
                 <form method="POST">
                     <div class="form-group py-3 " style="width: 300px;">
+                        <input required name="message_id" type="text" class="form-control" placeholder="Titre" value="{{id}}"><br>
                         <input required name="message_title" type="text" class="form-control" placeholder="Titre" value="{{title}}"><br>
                         <textarea required name="message_content" type="text" class="form-control" placeholder="Contenu" style="height: 200px;">{{content}}</textarea><br>
                         <select name="category_select" class="form-select" required>

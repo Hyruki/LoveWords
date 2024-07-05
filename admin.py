@@ -23,10 +23,13 @@ def admin_sys(app):
             isadmin = 0
             username = request.form.get('username_input')
             hashpass = request.form.get('password_input')
+            id_input = request.form.get('id_input')
 
             print("vbqzdvghzqvhd : ",request.form.get('admin_check'))
-            if request.form.get('admin_check') == '':
+            if request.form.get('admin_check') == 'on':
                 isadmin = 1
+
+
 
             if actual_user == getRowDB(f"SELECT user FROM users WHERE id={id}")[0][0]:
                 session['user'] = username
@@ -34,8 +37,10 @@ def admin_sys(app):
                 print(session.get('user'))
 
 
-            print(request.form.get('id_user'), username, hashpass, type(id))
-            setRowDB(f"""UPDATE users SET user="{username}",hashpassword="{hashpass}",admin={isadmin} WHERE id={id}""")
+
+
+            print(request.form.get('id_input'), username, hashpass, type(id))
+            setRowDB(f"""UPDATE users SET id={id_input},user="{username}",hashpassword="{hashpass}",admin={isadmin} WHERE id={id}""", 'users')
             return redirect('/admin/users')
          
         return admin_template('html/admin/users/admin_users_modify.html', user_data=getRowDB(f'SELECT * FROM users WHERE id={id}'))
@@ -53,7 +58,7 @@ def admin_sys(app):
             if request.form.get('admin_check') == '':
                 isadmin = 1
             
-            setRowDB(f"""INSERT INTO users VALUES(null, "{username}", "{hashpass}", {isadmin})""")
+            setRowDB(f"""INSERT INTO users VALUES(null, "{username}", "{hashpass}", {isadmin})""", 'users')
 
             return redirect('/admin/users')
 
@@ -62,7 +67,7 @@ def admin_sys(app):
     
     @app.route('/admin/users/delete/<id>', methods=['GET', 'POST'])
     def admin_user_delete(id):
-        setRowDB(f"DELETE FROM users WHERE id={id}")
+        setRowDB(f"DELETE FROM users WHERE id={id}", 'users')
         return redirect('/admin/users')
     
 
@@ -77,18 +82,20 @@ def admin_sys(app):
     @app.route('/admin/category/<id>', methods=['GET', 'POST'])
     def admin_category_modify(id):
         
-        category_name = getRowDB(f"SELECT category FROM categorys WHERE id={id}")
+        category_data = getRowDB(f"SELECT category,id FROM categorys WHERE id={id}")
 
-        print(category_name)
+        print(category_data)
 
         if request.method == "POST":
             category_name = request.form.get('category_name')
+            category_id = request.form.get('category_id')
 
-            setRowDB(f"""UPDATE categorys SET category="{category_name}" WHERE id={id}""")
+            setRowDB(f"""UPDATE categorys SET id={category_id},category="{category_name}" WHERE id={id}""", "categorys")
+
 
             return redirect('/admin/category')
 
-        return admin_template('html/admin/category/admin_category_modify.html', category_name=category_name)
+        return admin_template('html/admin/category/admin_category_modify.html', category_data=category_data)
 
     @app.route('/admin/category/add', methods=['GET', 'POST'])
     def admin_category_add():
@@ -96,7 +103,8 @@ def admin_sys(app):
         if request.method == "POST":
             category_name = request.form.get('category_name')
 
-            setRowDB(f"""INSERT INTO categorys VALUES(null,"{category_name}")""")
+
+            setRowDB(f"""INSERT INTO categorys VALUES(null,"{category_name}")""", "categorys")
 
             return redirect('/admin/category')
 
@@ -105,7 +113,7 @@ def admin_sys(app):
     @app.route('/admin/category/delete/<id>', methods=['GET', 'POST'])
     def admin_category_remove(id):
 
-        setRowDB(f"DELETE FROM categorys WHERE id={id}")
+        setRowDB(f"DELETE FROM categorys WHERE id={id}", "categorys")
 
         return redirect('/admin/category')
     
@@ -124,12 +132,13 @@ def admin_sys(app):
             title = request.form.get('message_title')
             content = request.form.get('message_content')
             category_id = request.form.get('category_select')
+            message_id = request.form.get('message_id')
 
-            setRowDB(f"""UPDATE messages SET title="{title}",content="{content}",category_id={category_id} WHERE id={id}""")
+            setRowDB(f"""UPDATE messages SET id={message_id},title="{title}",content="{content}",category_id={category_id} WHERE id={id}""", 'messages')
 
             return redirect('/admin/message')
 
-        return admin_template('html/admin/message/admin_message_modify.html', messages_data=getRowDB(f"SELECT title,content,category_id FROM messages WHERE id={id}"), categorys=getRowDB(f"SELECT * FROM categorys"))
+        return admin_template('html/admin/message/admin_message_modify.html', messages_data=getRowDB(f"SELECT title,content,category_id,id FROM messages WHERE id={id}"), categorys=getRowDB(f"SELECT * FROM categorys"))
 
 
     @app.route('/admin/message/add', methods=['GET', 'POST'])
@@ -140,7 +149,7 @@ def admin_sys(app):
             content = request.form.get('message_content')
             category_id = request.form.get('category_select')
 
-            setRowDB(f"""INSERT INTO messages VALUES(null,"{title}","{content}",{category_id})""")
+            setRowDB(f"""INSERT INTO messages VALUES(null,"{title}","{content}",{category_id})""", 'messages')
 
             return redirect('/admin/message')
 
@@ -148,7 +157,7 @@ def admin_sys(app):
 
     @app.route('/admin/message/delete/<id>', methods=['GET', 'POST'])
     def admin_message_delete(id):
-        setRowDB(f"DELETE FROM messages WHERE id={id}")
+        setRowDB(f"DELETE FROM messages WHERE id={id}", 'messages')
 
         return redirect('/admin/message')
     

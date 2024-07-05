@@ -16,11 +16,13 @@
     <center>
         <div class="container shadow border-dark border-1 my-5">
             <center>
-                {% set category_name_id = category_name[0][0] %}
+                {% set category_name_id = category_data[0][0] %}
+                {% set category_id = category_data[0][1] %}
                 <h1>Category - Modification</h1>
                 <a class="btn btn-dark m-auto my-3 px-5" href={{url_for('admin_category')}}>Retour</a><br><br>
                 <form method="POST">
                     <div class="form-group py-3" style="width: 300px;">
+                        <input required name="category_id" type="text" class="form-control" placeholder="Nom de catégorie" value="{{category_id}}"><br>
                         <input required name="category_name" type="text" class="form-control" placeholder="Nom de catégorie" value="{{category_name_id}}"><br>
                         <button type="Submit" class="btn m-auto my-3 px-5" style="background-color: rgb(93, 187, 0);">Mettre à jour</button>
                     </div>

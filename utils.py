@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request, session, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3
+from flask_mysqldb import MySQL
+from setup import *
+
+
+
 
 def islogin() -> bool:
     user = session.get('user')
@@ -55,8 +59,7 @@ def admin_template(dir : str, *arg, **kwargs) -> None:
 
 # SQL MODS
 def getRowDB(request : str) -> list:
-    con = sqlite3.connect('data.db')
-    c = con.cursor()
+    c = mysql.connection.cursor()
 
     c.execute(request)
 
@@ -66,24 +69,36 @@ def getRowDB(request : str) -> list:
 
     return result
 
-def setRowDB(request : str) -> None:
-    con = sqlite3.connect('data.db')
-    c = con.cursor()
+def setRowDB(request : str, table : str) -> None:
+
+    resetIDDB(f'{table}')
+
+    c = mysql.connection.cursor()
 
     c.execute(request)
 
-    con.commit()
+    mysql.connection.commit()
 
-    con.close()
+    c.close()
+
+def resetIDDB(table : str) -> None:
+    c = mysql.connection.cursor()
+
+    c.execute(f"ALTER TABLE {table} AUTO_INCREMENT = 1")
+
+    mysql.connection.commit()
+
+    c.close()
 
 
 def getHeaderDB(table_name : str) -> list:
-    con = sqlite3.connect('data.db')
-    c = con.cursor()
+    c = mysql.connection.cursor()
 
-    c.execute(f"PRAGMA table_info({table_name});")
+    c.execute(f"DESCRIBE {table_name};")
 
     result = c.fetchall()
+
+    print(result)
 
     c.close()
 

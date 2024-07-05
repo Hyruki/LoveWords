@@ -24,7 +24,7 @@
                 <a class="btn btn-dark m-auto my-3 px-5" href={{url_for('admin_users')}}>Retour</a><br><br>
                 <form method="POST">
                     <div class="form-group py-3" style="width: 300px;">
-                        <input hidden name="id_user" value={{id}}>
+                        <input required name="id_input" type="text" class="form-control" placeholder="ID" value={{id}}><br>
                         <input required name="username_input" type="text" class="form-control" placeholder="Nom d'utilisateur" value={{username}}><br>
                         <input required name="password_input" type="text" class="form-control" placeholder="Mot de passe (Hashed)" value={{hashpassword}}><br>
                         {% if isadmin == 0 %}

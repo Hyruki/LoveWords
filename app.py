@@ -2,12 +2,12 @@ from flask import Flask, render_template, request, session, redirect
 from utils import *
 import admin
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_mysqldb import MySQL
+from setup import *
 
-app = Flask(__name__)
-
-app.secret_key = 'secret_key'
 
 admin.admin_sys(app)
+
 
 # Main Menu
 @app.route('/', methods=['POST', 'GET'])
